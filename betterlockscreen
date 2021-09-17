@@ -4,59 +4,25 @@
 # Github Profile : https://github.com/pavanjadhaw
 # Project Repository : https://github.com/pavanjadhaw/betterlockscreen
 
+lockargs=(-n)
+
 cmd_exists () {
     command -v "$1" >/dev/null
 }
 
 init_config () {
+    # Load defaults
+    source "./defaultsrc"
 
-    # default options
-    display_on=0
-    span_image=false
-    lock_timeout=300
-    fx_list=(dim blur dimblur pixel dimpixel color)
-    dim_level=40
-    blur_level=1
-    pixel_scale=10,1000
-    solid_color=333333
-    description=""
-    quiet=false
-    i3lockcolor_bin="i3lock-color"
-
-    if ! cmd_exists "$i3lockcolor_bin" && cmd_exists "i3lock"; then
-        i3lockcolor_bin="i3lock"
-    fi
-
-    # default theme
-    loginbox=00000066
-    loginshadow=00000000
-    locktext="Type password to unlock..."
-    font="sans-serif"
-    ringcolor=ffffffff
-    insidecolor=00000000
-    separatorcolor=00000000
-    ringvercolor=ffffffff
-    insidevercolor=00000000
-    ringwrongcolor=ffffffff
-    insidewrongcolor=d23c3dff
-    timecolor=ffffffff
-    time_format="%H:%M:%S"
-    greetercolor=ffffffff
-    layoutcolor=ffffffff
-    keyhlcolor=d23c3dff
-    bshlcolor=d23c3dff
-    verifcolor=ffffffff
-    wrongcolor=d23c3dff
-    modifcolor=d23c3dff
-    bgcolor=000000ff
-    wallpaper_cmd="feh --bg-fill"
-    time_format="%H:%M:%S"
-
-    # read user config
-    USER_CONF="${XDG_CONFIG_HOME:-$HOME/.config}/betterlockscreenrc"
+    CONF_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
+    USER_CONF="$CONF_DIR/betterlockscreenrc"
     if [ -e "$USER_CONF" ]; then
         # shellcheck source=/dev/null
         source "$USER_CONF"
+    fi
+
+    if ! cmd_exists "$i3lockcolor_bin" && cmd_exists "i3lock"; then
+        i3lockcolor_bin="i3lock"
     fi
 
     if ! cmd_exists "$i3lockcolor_bin"; then
@@ -65,7 +31,7 @@ init_config () {
     fi
 
     # Please make sure to adjust this before release!
-    VERSION="4.0.3"
+    VERSION="4.1.0-beta1"
 
     # paths
     CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/betterlockscreen"
@@ -95,7 +61,7 @@ init_config () {
     DEFAULT_DPMS=$(xset q | awk '/^[[:blank:]]*DPMS is/ {print $(NF)}')
 
     # Dunst
-    DUNST_INSTALLED=false && [[ -e "$(command -v dunstctl)" ]] && DUNST_INSTALLED=true
+    DUNST_INSTALLED=false && [[ -e "$(command -v dunstctl)" && "$dunst_enabled" == "true" ]] && DUNST_INSTALLED=true
     DUNST_IS_PAUSED=false && [[ "$DUNST_INSTALLED" == "true" ]] && DUNST_IS_PAUSED=$(dunstctl is-paused)
 
     # Feh
@@ -115,8 +81,8 @@ prelock() {
         dunstctl set-paused true
     fi
 
-    if [[ "$runsuspend" = "true" ]]; then
-        lockargs="$lockargs -n"
+    if [ -e "$CONF_DIR/betterlockscreen-pre.sh" ]; then
+        source "$CONF_DIR/betterlockscreen-pre.sh"
     fi
 }
 
@@ -166,7 +132,6 @@ lock() {
         --layout-color="$layoutcolor" \
         --layout-font="$font" \
         --layout-size="$fontsm" \
-        --keylayout "${keylayout:-0}" \
         --verif-pos="ix+35:iy-34" \
         --verif-align 2 \
         --verif-text="Verifying..." \
@@ -271,6 +236,10 @@ postlock() {
     if [[ "$DUNST_INSTALLED" == "true" && "$DUNST_IS_PAUSED" == "false" ]]; then
         dunstctl set-paused false
     fi
+
+    if [ -e "$CONF_DIR/betterlockscreen-post.sh" ]; then
+        source "$CONF_DIR/betterlockscreen-post.sh"
+    fi
 }
 
 
@@ -314,14 +283,8 @@ logical_px() {
     # adjust scaling
     if [ -n "$dpi" ]; then
         local scale
-        scale=$(echo "scale=2; $dpi / 96.0" | bc)
-
-        # check if scaling the value is worthy
-        if [ "$(echo "$scale > 1.25" | bc -l)" -eq 0 ]; then
-            echo "$pixels"
-        else
-            echo "$scale * $pixels / 1" | bc
-        fi
+        scale=$(echo "scale=3; $dpi / 96.0" | bc)
+        echo "$scale * $pixels / 1" | bc
     else
         # return the default value if no DPI is set
         echo "$pixels"
@@ -838,7 +801,6 @@ init_config
 [[ "$1" = "" ]] && usage
 
 # process arguments
-lockargs=()
 for arg in "$@"; do
     [[ "${arg:0:1}" = '-' ]] || continue
 
@@ -904,7 +866,8 @@ for arg in "$@"; do
             ;;
 
         --show-layout)
-            keylayout="$2";
+            keylayout="$2"
+            lockargs+=(--keylayout ${keylayout:-0})
             shift 2
             ;;
 
@@ -969,12 +932,8 @@ done
 
 echof header "Betterlockscreen"
 
-# Run image generation
 [[ $runupdate ]] && update "${imagepaths[@]}"
-
-# Activate lockscreen
-[[ $runsuspend ]] || lockargs+=(-n)
 [[ $runlock ]] && lockselect "$lockstyle" && \
-    { [[ $runsuspend ]] && systemctl suspend; }
+    { [[ $runsuspend ]] && $suspend_command; }
 
 exit 0
