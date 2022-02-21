@@ -49,7 +49,7 @@ The script takes a directory or image, adds various effects and caches the image
 
 Clone the repo and run the script. The script is very simple and takes two parameters:
   * `<install-mode>`: (string) 'user' installs to '~/.local/bin/', 'system' installs to '/usr/local/bin'
-  * `[<version>]`: (string) defaults to local, which will install from the local copy of the repo. Use 'latest', which will determine the latest tag from git or specified branch/tag 
+  * `[<version>]`: (string) defaults to local, which will install from the local copy of the repo. Use 'latest', which will discard any chnage made locally and update the repo
 
 For system-installation:
 ```sh
