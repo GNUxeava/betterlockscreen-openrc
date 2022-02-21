@@ -34,10 +34,10 @@ case $1 in
 	;;
 
 	*)
-		echo "Usage: $0 <install-mode> [<version>] [<systemd-service>]"
+		echo "Usage: $0 <install-mode> [<version>]"
 		echo "  <install-mode>: (string) 'user' installs to '~/.local/bin/', 'system' installs to '/usr/local/bin'"
-		echo "  <version>: (string) defaults to local, which will install from the local copy of the repo. Use 'latest' which will determine the latest tag from git or specified branch/tag"
-		echo -e "\nPlease note: The order of the parameters *is* relevant, if you want to set '<system-service>' you need to specify '<version>' as well!"
+		echo "  <version>: (string) defaults to local, which will install from the local copy of the repo. Use 'latest', which will discard any change made locally and update the repo"
+		echo -e "\nPlease note: The order of the parameters *is* relevant."
 		exit 1
 	;;
 esac
@@ -70,14 +70,10 @@ echof ok "done!"
 
 VERSION=$2
 if [[ $VERSION == "latest" ]]; then
-	echof info "Determinate latest release... "
-	VERSION=$(git describe --tags "$(git rev-list --tags --max-count=1)")
+	echof info "Updating the repo"
+  git restore .
+  git clone --no-rebase
 	echof ok "done! ($VERSION)"
-
-  BLI_TEMP_DIR=$(mktemp -d)
-
-  git clone -b "$VERSION" https://github.com/GNUxeava/betterlockscreen "$BLI_TEMP_DIR" &>/dev/null
-  cd "$BLI_TEMP_DIR" || exit 1
 fi
 echof info "Installing Betterlockscreen to '$BL_INSTALL_DIR'... "
 cp betterlockscreen "$BL_INSTALL_DIR"
