@@ -1,6 +1,8 @@
 # Betterlockscreen
 > fast and sweet looking lockscreen for linux systems with effects and OpenRC support!
 
+Forked from [betterlockscreen/betterlockscreen](https://github.com/betterlockscreen/betterlockscreen)
+
 <div align="center">
   <a href="https://github.com/pavanjadhaw/betterlockscreen/blob/main/LICENSE"><img src="https://img.shields.io/github/license/pavanjadhaw/betterlockscreen.svg?style=for-the-badge"></a>
 </div>
