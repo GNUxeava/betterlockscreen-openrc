@@ -969,6 +969,6 @@ echof header "Betterlockscreen"
 # Activate lockscreen
 [[ $runsuspend ]] || lockargs+=(-n)
 [[ $runlock ]] && lockselect "$lockstyle" && \
-    { [[ $runsuspend ]] && systemctl suspend; }
+    { [[ $runsuspend ]] && loginctl suspend; }
 
 exit 0

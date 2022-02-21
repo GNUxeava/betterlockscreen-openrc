@@ -36,8 +36,8 @@ case $1 in
 	*)
 		echo "Usage: $0 <install-mode> [<version>] [<systemd-service>]"
 		echo "  <install-mode>: (string) 'user' installs to '~/.local/bin/', 'system' installs to '/usr/local/bin'"
-		echo "  <version>: (string) defaults to 'latest' which will determinate the latest tag from git or specified branch/tag"
-		echo "  <systemd-service>: (boolean) defaults to 'false' - Whether to copy and enable system-service"
+		echo "  <version>: (string) defaults to local, which will install from the local copy of the repo. Use 'latest' which will determine the latest tag from git or specified branch/tag"
+		echo "  [WIP: We are not supposed to cater to systemd so this option will not work] <systemd-service>: (boolean) defaults to 'false' - Whether to copy and enable system-service"
 		echo -e "\nPlease note: The order of the parameters *is* relevant, if you want to set '<system-service>' you need to specify '<version>' as well!"
 		exit 1
 	;;
@@ -70,17 +70,17 @@ done
 echof ok "done!"
 
 VERSION=$2
-if [[ $VERSION == "" ]] || [[ $VERSION == "latest" ]]; then
+if [[ $VERSION == "latest" ]]; then
 	echof info "Determinate latest release... "
 	VERSION=$(git describe --tags "$(git rev-list --tags --max-count=1)")
 	echof ok "done! ($VERSION)"
+  #fi
+
+  BLI_TEMP_DIR=$(mktemp -d)
+
+  git clone -b "$VERSION" https://github.com/pavanjadhaw/betterlockscreen "$BLI_TEMP_DIR" &>/dev/null
+  cd "$BLI_TEMP_DIR" || exit 1
 fi
-
-BLI_TEMP_DIR=$(mktemp -d)
-
-git clone -b "$VERSION" https://github.com/pavanjadhaw/betterlockscreen "$BLI_TEMP_DIR" &>/dev/null
-cd "$BLI_TEMP_DIR" || exit 1
-
 echof info "Installing Betterlockscreen to '$BL_INSTALL_DIR'... "
 cp betterlockscreen "$BL_INSTALL_DIR"
 echof ok "done!"
