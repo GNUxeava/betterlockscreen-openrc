@@ -1,22 +1,8 @@
 # Betterlockscreen
-> fast and sweet looking lockscreen for linux systems with effects!
+> fast and sweet looking lockscreen for linux systems with effects and OpenRC support!
 
 <div align="center">
-  <a href="https://github.com/pavanjadhaw/betterlockscreen/releases"><img alt="GitHub release (latest by date including pre-releases)" src="https://img.shields.io/github/v/release/pavanjadhaw/betterlockscreen?include_prereleases&label=latest&style=for-the-badge"></a>
-  <a href="https://github.com/pavanjadhaw/betterlockscreen/releases"><img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/pavanjadhaw/betterlockscreen?label=Stable&style=for-the-badge"></a>
-  <a href="https://github.com/pavanjadhaw/betterlockscreen/actions/workflows/main.yml?query=branch%3Amain"><img alt="GitHub Workflow Status (main)" src="https://img.shields.io/github/workflow/status/pavanjadhaw/betterlockscreen/Main/main?label=main&style=for-the-badge"></a>
-  <a href="https://github.com/pavanjadhaw/betterlockscreen/actions/workflows/main.yml?query=branch%3Anext"><img alt="GitHub Workflow Status (next)" src="https://img.shields.io/github/workflow/status/pavanjadhaw/betterlockscreen/Main/next?label=next&style=for-the-badge"></a>
-  <a href="https://github.com/pavanjadhaw/betterlockscreen/milestone/²"><img alt="GitHub milestone" src="https://img.shields.io/github/milestones/progress/pavanjadhaw/betterlockscreen/2?style=for-the-badge"></a>
-  <a href="https://github.com/pavanjadhaw/betterlockscreen/compare/v4.0.3...next"><img alt="GitHub commits since latest release (by date) for a branch" src="https://img.shields.io/github/commits-since/pavanjadhaw/betterlockscreen/v4.0.3/next?style=for-the-badge"></a>
   <a href="https://github.com/pavanjadhaw/betterlockscreen/blob/main/LICENSE"><img src="https://img.shields.io/github/license/pavanjadhaw/betterlockscreen.svg?style=for-the-badge"></a>
-</div>
-
-<div align="center">
-  <h2>You want to support us?</h2>
-
-  <a href="https://github.com/pavanjadhaw/betterlockscreen/stargazers"><img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/pavanjadhaw/betterlockscreen?style=social"></a>
-  <a href="https://github.com/pavanjadhaw/betterlockscreen/fork"><img alt="GitHub forks" src="https://img.shields.io/github/forks/pavanjadhaw/betterlockscreen?style=social"></a>
-  <a href="https://www.codetriage.com/pavanjadhaw/betterlockscreen"><img src="https://www.codetriage.com/pavanjadhaw/betterlockscreen/badges/users.svg"></a>
 </div>
 <br />
 
@@ -33,7 +19,6 @@
 - [Usage](#usage)
 - [Background](#background)
 - [Keybinding](#keybindings)
-- [Lockscreen on sleep/suspend with systemd](#systemd)
 
 ## About
 
@@ -58,61 +43,25 @@ The script takes a directory or image, adds various effects and caches the image
 > Note: Make sure your system has all dependencies satisfied
 
 ## Installation
-### Package Manager
-
-<a href="https://repology.org/project/betterlockscreen">
-  <img src="https://repology.org/badge/vertical-allrepos/betterlockscreen.svg" alt="Packaging status" align="right">
-</a>
-
-Betterlockscreen is available via package manager on some linux-distributions, if you miss your favorite one you can follow along with our [installation-script](#installation-script) or [manual-installation](#manual-installation).
-
-If you are using **Arch Linux**, you can install the AUR package
-[betterlockscreen](https://aur.archlinux.org/packages/betterlockscreen/) to get the latest
-version, or [betterlockscreen-git](https://aur.archlinux.org/packages/betterlockscreen-git/) for the most up-to-date (unstable) changes.
-
-If you are using **Gentoo Linux**, you can install `betterlockscreen` from Gentoo's [GURU overlay](https://wiki.gentoo.org/wiki/Project:GURU) using `emerge x11-misc/betterlockscreen`.
-
-If you are using **NixOS**, [betterlockscreen](https://search.nixos.org/packages?query=betterlockscreen) is available in both the [stable](https://github.com/NixOS/nixpkgs/blob/nixos-21.05/pkgs/misc/screensavers/betterlockscreen/default.nix) and [unstable](https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/misc/screensavers/betterlockscreen/default.nix) channels and can be installed using `nix-env -iA nixos.betterlockscreen`.
-
-If you are using **Void Linux**, you can install [betterlockscreen](https://github.com/void-linux/void-packages/blob/master/srcpkgs/betterlockscreen/template) using `xbps-install -S betterlockscreen`.
-
 ### Installation Script
 
-We have created an automatic [install-script](https://github.com/pavanjadhaw/betterlockscreen/blob/main/install.sh) for Betterlockscreen. The script is very simple and takes three parameters:
+Clone the repo and run the script. The script is very simple and takes two parameters:
   * `<install-mode>`: (string) 'user' installs to '~/.local/bin/', 'system' installs to '/usr/local/bin'
-  * `[<version>]`: (string) defaults to 'latest' which will determinate the latest tag from git or specified branch/tag
-  * `[<systemd-service>]`: (boolean) defaults to 'false' - Whether to copy and enable system-service.
+  * `[<version>]`: (string) defaults to local, which will install from the local copy of the repo. Use 'latest', which will determine the latest tag from git or specified branch/tag 
 
 For system-installation:
 ```sh
-wget https://git.io/JZyxV -O - -q | bash -- system
+bash install.sh system
 ```
 
 For user-installation:
 ```sh
-wget https://git.io/JZyxV -O - -q | bash -- user
+bash install.sh user
 ```
-
-Please note: The [git.io](https://git.io/)-URL is just a short-url for the [main/install.sh](https://raw.githubusercontent.com/pavanjadhaw/betterlockscreen/main/install.sh).
 
 ### Manual Installation
 
-Ỳou can download the latest release [here](https://github.com/pavanjadhaw/betterlockscreen/releases), please ensure to fullfill the [system-requirements](#system-requirements)!
-
-You will need to copy "betterlockscreen" to you desired binary-directory, if you want to use the systemd-service you will need to copy the service-file from "system/" to the desired location on your system.
-
-Example (Ubuntu):
-```sh
-wget https://github.com/pavanjadhaw/betterlockscreen/archive/refs/heads/main.zip
-unzip main.zip
-
-cd betterlockscreen-main/
-chmod u+x betterlockscreen
-cp betterlockscreen /usr/local/bin/
-
-cp system/betterlockscreen@.service /usr/lib/systemd/system/
-systemctl enable betterlockscreen@$USER
-```
+Clone the repo and copy `betterlockscreen` to the relevant directory. Make sure you have dependenncies installed. See [System Requirements](#system-requirements) above.
 
 ## Configuration
 
@@ -120,11 +69,6 @@ You can customize betterlockscreen for your needs, copy the config file from the
 
 If no configuration-file is found, then the default configurations (which is equal to the example but currently hardcoded) will be used.
 
-If you have installed betterlockscreen from AUR package, then you can copy default config from docs
-
-```sh
-cp /usr/share/doc/betterlockscreen/examples/betterlockscreenrc ~/.config
-```
 
 ## Usage
 
@@ -243,30 +187,6 @@ Add this line to your `~/.config/sxhkd/sxhkdrc`
 alt + shift + x
     betterlockscreen -l dim
 ```
-
-<h2 id="systemd">Systemd-Service: Lockscreen after sleep/suspend</h2>
-
-```sh
-# move service file to proper dir (the aur package does this for you)
-cp betterlockscreen@.service /usr/lib/systemd/system/
-
-# enable systemd service
-systemctl enable betterlockscreen@$USER
-
-# disable systemd service
-systemctl disable betterlockscreen@$USER
-
-# Note: Now you can call systemctl suspend to suspend your system
-# and betterlockscreen service will be activated
-# so when your system wakes your screen will be locked.
-```
-
-**Hint:** The systemd-unit expects betterlockscreen to be installed in "/usr/local/bin", so maybe you want to check or change this!
-
-Resources and more informations:
- * https://gist.github.com/Raymo111/91ffd256b7aca6a85e8a99d6331d3b7b
- * https://github.com/Raymo111/i3lock-color/issues/174#issuecomment-687149213
-
 ---
 
 ## Countributing
