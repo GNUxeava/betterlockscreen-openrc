@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-# Author : Copyright (c) 2017-2021 Pavan Jadhaw, and others (https://github.com/pavanjadhaw/betterlockscreen/graphs/contributors)
-# Github Profile : https://github.com/pavanjadhaw
-# Project Repository : https://github.com/pavanjadhaw/betterlockscreen
+# Author : Copyright (c) 2017-2022 Pavan Jadhaw, and others (https://github.com/betterlockscreen/betterlockscreen/graphs/contributors)
+# Project Repository : https://github.com/betterlockscreen/betterlockscreen
 
 cmd_exists () {
     command -v "$1" >/dev/null
@@ -278,7 +277,7 @@ postlock() {
 lockselect() {
 
     echof act "Running prelock..."
-    prelock &
+    prelock
 
     case "$1" in
         dim) if [ -f "$CUR_L_DIM" ]; then lock "$CUR_L_DIM"; else failsafe; fi ;;
@@ -291,7 +290,7 @@ lockselect() {
     esac
 
     echof act "Running postlock..."
-    postlock &
+    postlock
 }
 
 # calculate adjustments for hidpi displays
@@ -607,8 +606,8 @@ update () {
         local geometry="${dinfo[2]}"
 
         read -r -a cols <<< "${geometry//[x+-]/ }"
-        local position="${geometry#*${cols[1]}}"
-        local resolution="${geometry%${position}*}"
+        local position="${geometry#*"${cols[1]}"}"
+        local resolution="${geometry%"${position}"*}"
 
         if [[ $id -eq "$display_on" ]] || [[ "$display_on" -eq 0 ]]; then
 
@@ -788,7 +787,7 @@ usage() {
     echo "      Scale image to span multiple displays"
     echo
     echo "  --off <N>"
-    echo "      Turn display off after N minutes"
+    echo "      Turn display off after N seconds"
     echo
     echo "  --fx <EFFECT,EFFECT,EFFECT>"
     echo "      List of effects to generate"
